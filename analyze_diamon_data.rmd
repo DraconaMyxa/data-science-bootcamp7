@@ -1,0 +1,143 @@
+---
+title: "Data Visualization"
+author: "Vaetita"
+date: "2023-02-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Analysis on Diamonds dataset
+
+Diamonds dataset is bundled in library ggplot2, the library for creating 2D Chart in R.
+
+First, we have to install **tidyverse**, package that include necessary libraries for Data Transformation and Data Visualization,  like dplyr, ggplot2, etc.
+
+```{r message=FALSE, warning=FALSE}
+## Install Package/Library - only in first time
+#install.packages("tidyverse")
+
+## Load Library - every time when open R Studio
+library(tidyverse)
+```
+
+After that, we review Diamonds dataset's structure by using *glimpse*.
+
+```{r message=FALSE, warning=FALSE}
+glimpse(diamonds)
+```
+
+We found that Diamonds dataset has 53,940 records with 10 columns. For the meaning of 10 columns, use *help* to read columns' meaning.
+
+```{r message=FALSE, warning=FALSE}
+help(diamonds)
+```
+
+![Diamond Anatomy](https://www.amorizjewelry.com/wp-content/uploads/2021/08/Anatomy-of-Diamond-Cut.png)
+
+### Question 1 : How price is distributed?
+We use Histogram to reveal distribution of diamond price in this dataset.
+
+```{r message=FALSE, warning=FALSE}
+ggplot(diamonds, aes(price)) +
+  geom_histogram(bins = 15, fill = "#F2CD5C") +
+  theme_minimal()
+```
+
+From histogram with 15 bins, we found that, price is skewed right. That means the majority of price in this dataset is not quite high.
+
+### Question 2 : How many diamond are there in each cut? And in each cut, how many diamond are there in each color?
+
+We use Bar Chart for figure out numbers of diamond in each cut, and set color to reveal diamond's color.
+
+```{r message=FALSE, warning=FALSE}
+ggplot(diamonds, aes(cut, fill = color)) +
+  geom_bar() +
+  theme_minimal()
+```
+
+We found that, in this dataset, diamonds with high quality of cut is majority and decrease in number according to lower quality of cut. And color G (medium quality of color) is majority in Very Good to Ideal cut.
+
+
+### Question 3 : How does price relate to table size? Are there any difference between cut, color and clarity?
+
+We use Scatter Plot to see relationship between :
+
+X : table
+
+Y : price
+
+color : cut, diamond's color and clarity
+
+Because of dataset size, we have to sampling 25% of dataset size before plotting chart.
+
+```{r message=FALSE, warning=FALSE}
+set.seed(12)
+diamonds_sample <- sample_frac(diamonds, 0.25)
+ggplot(diamonds_sample, aes(table, price, col = cut)) +
+  geom_point() +
+  theme_minimal()
+
+
+ggplot(diamonds_sample, aes(table, price, col = color)) +
+  geom_point() +
+  theme_minimal()
+
+
+ggplot(diamonds_sample, aes(table, price, col = clarity)) +
+  geom_point() +
+  theme_minimal()
+
+```
+
+We found that, price is gather between table size 50 - 65 mm. Cut is more related to table than color or clarity. For smaller table size trend is to be better quality of cut.
+
+
+### Question 4 : How does price relate to carat for each diamond's clarity?
+
+We use Scatter Plot again to see relationship between :
+
+X : carat
+
+Y : price
+
+color : clarity [I1 (worst) to IF (best)]
+
+with sampling size 25%
+```{r message=FALSE, warning=FALSE}
+set.seed(12)
+diamonds_sample <- sample_frac(diamonds, 0.25)
+ggplot(diamonds_sample, aes(carat, price, col = clarity)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm")
+```
+
+We found that when carat increase, price increase as well. The better clarity make slope grater, mean that price and carat has stronger direct variation than worse clarity.
+
+### Question 5 : How does diamond size relate to cut?
+
+We use Scatter Plot to see relationship between :
+
+X : depth
+
+Y : table
+
+color : cut
+
+with sampling size 25%
+
+```{r message=FALSE, warning=FALSE}
+set.seed(12)
+diamonds_sample <- sample_frac(diamonds, 0.25)
+ggplot(diamonds, aes(table, depth, col = cut)) +
+  geom_point() +
+  geom_rug() +
+  theme_minimal()
+```
+
+We found that, small table and depth (with little greater than table)  will have the best quality of cut. The quality of cut will decrease according to bigger table size. Diamonds, which in proper depth, will be good quality of cut.
+
+
+
